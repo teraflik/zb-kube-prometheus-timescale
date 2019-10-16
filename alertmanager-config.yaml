@@ -1,0 +1,16 @@
+global:
+  resolve_timeout: 5m
+route:
+  group_by:
+    - job
+  group_interval: 5m
+  group_wait: 30s
+  receiver: slack-zauba-cluster-monitor
+  repeat_interval: 12h
+receivers:
+  - name: slack-zauba-cluster-monitor
+    webhook_configs:
+      - url: https://hooks.slack.com/services/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
+  - name: slack-zauba-slackbot
+    webhook_configs:
+      - url: https://hooks.slack.com/services/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

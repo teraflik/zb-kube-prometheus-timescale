@@ -1,0 +1,47 @@
+apiVersion: "acid.zalan.do/v1"
+kind: postgresql
+metadata:
+  name: timescale-db
+  namespace: monitoring-backup
+spec:
+  # The zalando postgres-operator needs the name to start with teamId
+  # TODO: Modify the operator and recreate operator's image to drop teamId check.
+  teamId: timescale
+  dockerImage: teraflik/spilo-timescale:10 # Using custom spilo image with pg_prometheus included
+  volume:
+    size: 16Gi #TOTUNE
+    storageClass: gp2
+  numberOfInstances: 1
+  enableMasterLoadBalancer: false
+  enableReplicaLoadBalancer: false
+  # TODO: add podPriorityClassName
+  users:
+    epimetheus:
+      - login
+    grafana:
+      - login
+  databases:
+    epimetheus: epimetheus
+    grafana: grafana
+  postgresql:
+    version: "10"
+    # TOTUNE
+    parameters:
+      shared_preload_libraries: "pg_prometheus,timescaledb"
+      shared_buffers: "32MB"
+      max_connections: "10"
+      log_statement: "all"
+  # TOTUNE
+  resources:
+    requests:
+      cpu: 500m
+      memory: 4Gi
+    limits:
+      cpu: 1000m
+      memory: 8Gi
+  patroni:
+    pg_hba:
+      - host all all 0.0.0.0/0 md5
+    ttl: 30
+    loop_wait: &loop_wait 10
+    retry_timeout: 10
