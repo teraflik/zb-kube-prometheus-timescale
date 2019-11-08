@@ -15,7 +15,7 @@ local kp =
   // (import 'kube-prometheus/kube-prometheus-thanos-sidecar.libsonnet') +
   {
     _config+:: {
-      namespace: 'monitoring-backup',
+      namespace: 'monitoring',
     },
     prometheus+:: {
       prometheus+: {
